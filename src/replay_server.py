@@ -226,23 +226,6 @@ class TCPServer(object):
         server.start()
         self.instance = (self.instance[0], server.address[1])
 
-    def handleCertRequest(self, connection):
-        r = random.randint(2, 200)
-        name = "replayCertPass_" + str(r)
-
-        fname = "/opt/meddle/ClientCerts/%s.p12" % name
-        data = dict()
-        data["alias"] = name
-
-        with open(fname, "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read())
-
-        data["cert"] = encoded_string
-        data["pass"] = "1234"
-
-        print fname
-        response = 'HTTP/1.1 200 OK\r\n\r\n' + json.dumps(data)
-        connection.sendall(response)
 
     def handle(self, connection, address):
         '''
@@ -293,11 +276,6 @@ class TCPServer(object):
             #             connection.sendall( clientIP )
             connection.sendall("HTTP/1.1 200 OK\r\n\r\n{}".format(clientIP))
             return
-
-        #         if '/getTempCertPassRandom' in new_data:
-        #             print 'Cert request came in'
-        #             soWhat = self.handleCertRequest(connection)
-        #             return
 
         if new_data[0:3] == 'GET':
             itsGET = True
